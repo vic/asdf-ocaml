@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-export OPAMROOT=$ASDF_INSTALL_PATH
+eval $($ASDF_INSTALL_PATH/$ASDF_INSTALL_VERSION/bin/opam config env --root=$ASDF_INSTALL_PATH)
