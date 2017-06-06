@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+export OPAMROOT=$ASDF_INSTALL_PATH

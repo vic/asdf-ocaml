@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+opam_version() {
+    if [ -n "$OPAM_VERSION" ]; then
+        echo $OPAM_VERSION
+    else
+        curl -sL https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh  | grep "VERSION=\'" | sed -e "s/VERSION=//;s/'//g"
+    fi
+}
+
+OPAM_VERSION=$(opam_version)
+OPAM_FILE="opam-$OPAM_VERSION-$(uname -m || echo unknown)-$(uname -s || echo unknown)"
+OPAM_URL="https://github.com/ocaml/opam/releases/download/$OPAM_VERSION/$OPAM_FILE"
+
+ocaml_install() {
+    local install_type=$1
+    local release=$2
+    local install_path=$3
+
+    local tmp_dir=$(mktemp -d -t ocaml_XXXXXXX)
+
+    local current_script_path=$(dirname ${BASH_SOURCE[0]})
+    local plugin_path=$(dirname $current_script_path)
+    local opam_path=$plugin_path/opam
+
+    export PATH=$opam_path:$PATH
+
+    if [ "$install_type" != "version" ]; then
+        echo "asdf-opam supports release installs only."
+        exit 1
+    fi
+
+
+    # running this in a subshell
+    # we don't want to disturb current working dir
+    (
+        set -e
+        cd $tmp_dir
+
+        curl -s -L $OPAM_URL > $tmp_dir/opam
+        chmod 755 $tmp_dir/opam
+
+        $tmp_dir/opam init --yes --root $install_path --comp $release
+        mv $tmp_dir/opam $install_path/$release/bin/
+
+    ) || (rm -rf $install_path; exit 1)
+}
+
+ocaml_install $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH

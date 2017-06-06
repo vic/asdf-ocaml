@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo $ASDF_INSTALL_VERSION/bin
