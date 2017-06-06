@@ -13,7 +13,7 @@ matrix:
           cat <<-EOF | docker run -i ubuntu bash -
           set -e
           export DEBIAN_FRONTEND=noninteractive
-          apt-get update -qq && apt-get install -qq git curl build-essential unzip
+          apt-get update -qq && apt-get install -qq git curl build-essential unzip m4
           git clone https://github.com/asdf-vm/asdf.git
           . asdf/asdf.sh
           asdf plugin-test ocaml https://github.com/vic/asdf-ocaml.git 'ocaml --help'
