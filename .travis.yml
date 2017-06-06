@@ -29,6 +29,6 @@ matrix:
         - |
           bash -c "while true; do echo \$(date) - travis building ...; sleep 540; done" &
           export PING_LOOP_PID=$!
-        - asdf plugin-test haskell https://github.com/vic/asdf-ocaml.git 'ocaml --help'
+        - asdf plugin-test ocaml https://github.com/vic/asdf-ocaml.git 'ocaml --help'
       after_script:
         - kill -9 $PING_LOOP_PID
