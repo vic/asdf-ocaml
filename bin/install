@@ -4,12 +4,12 @@ opam_version() {
     if [ -n "$OPAM_VERSION" ]; then
         echo $OPAM_VERSION
     else
-        curl -sL https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh  | grep "VERSION=\'" | sed -e "s/VERSION=//;s/'//g"
+        curl -sL https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh  | grep "VERSION=" | sed -e "s/VERSION=//;s/'//g"
     fi
 }
 
 OPAM_VERSION=$(opam_version)
-OPAM_FILE="opam-$OPAM_VERSION-$(uname -m || echo unknown)-$(uname -s || echo unknown)"
+OPAM_FILE="opam-${OPAM_VERSION}-$(uname -m || echo unknown)-$(uname -s || echo unknown)"
 OPAM_URL="https://github.com/ocaml/opam/releases/download/$OPAM_VERSION/$OPAM_FILE"
 
 ocaml_install() {
@@ -29,7 +29,6 @@ ocaml_install() {
         echo "asdf-opam supports release installs only."
         exit 1
     fi
-
 
     # running this in a subshell
     # we don't want to disturb current working dir
