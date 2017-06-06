@@ -16,6 +16,6 @@ cmd="$cmd $releases_path"
 
 
 # Fetch all tag names, and get only second column. Then remove all unnecesary characters.
-versions=$(eval $cmd | grep -oE "name\": \"\d[^\"]+" | sed 's/name\": \"//' | sort_versions)
+versions=$(eval $cmd | grep -oE "name\": \"\d.{1,15}\"" | sed 's/name\": \"//;s/\"//' | sort_versions)
 echo $versions
 
