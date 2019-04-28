@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-opam_version() {
-    if [ -n "$OPAM_VERSION" ]; then
-        echo $OPAM_VERSION
-    else
-        curl -sL https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh  | grep "VERSION=" | sed -e "s/VERSION=//;s/'//g"
-    fi
-}
+get_latest_opam() {
+    curl -s https://api.github.com/repos/ocaml/opam/releases/latest \
+    | grep "opam" \
+    | grep "\-x86_64-linux" \
+    | grep -v ".asc" \
+    | cut -d : -f 2,3 \
+    | tr -d \" \
+    | wget -qi - --show-progress --output-document=opam
 
-OPAM_VERSION=$(opam_version)
-OPAM_FILE="opam-${OPAM_VERSION}-$(uname -m || echo unknown)-$(uname -s || echo unknown)"
-OPAM_URL="https://github.com/ocaml/opam/releases/download/$OPAM_VERSION/$OPAM_FILE"
+    chmod +x opam
+}
 
 ocaml_install() {
     local install_type=$1
@@ -33,16 +33,15 @@ ocaml_install() {
     # running this in a subshell
     # we don't want to disturb current working dir
     (
-        set -e
         cd $tmp_dir
-
-        curl -s -L $OPAM_URL > $tmp_dir/opam
-        chmod 755 $tmp_dir/opam
-
-        $tmp_dir/opam init --yes --root $install_path --comp $release
+        echo "downloading latest opam..."
+        get_latest_opam
+        echo "installing specified version of ocaml..."
+        ./opam init --yes --root $install_path --comp $release
         mv $tmp_dir/opam $install_path/$release/bin/
 
     ) || (rm -rf $install_path; exit 1)
 }
+
 
 ocaml_install $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
