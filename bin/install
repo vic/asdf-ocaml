@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 
 get_latest_opam() {
+    local platform
+
+    if [[ "$OSTYPE" == "linux"* ]]; then
+        platform="-x86_64-linux"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        platform="-x86_64-darwin"
+    elif [[ "$OSTYPE" == "openbsd"* ]]; then
+        platform="-x86_64-openbsd"
+    fi
+
     curl -s https://api.github.com/repos/ocaml/opam/releases/latest \
     | grep "opam" \
-    | grep "\-x86_64-linux" \
+    | grep -- $platform \
     | grep -v ".asc" \
     | cut -d : -f 2,3 \
     | tr -d \" \
@@ -42,6 +52,5 @@ ocaml_install() {
 
     ) || (rm -rf $install_path; exit 1)
 }
-
 
 ocaml_install $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
