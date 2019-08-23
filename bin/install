@@ -49,7 +49,6 @@ ocaml_install() {
     echo "installing specified version of ocaml..."
     ./opam init --yes --root $install_path --comp $release
     mv $tmp_dir/opam $install_path/$release/bin/
-
   ) || (
     rm -rf $install_path
     exit 1
