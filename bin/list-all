@@ -9,9 +9,10 @@ function sort_versions() {
 }
 
 cmd="curl -s"
-if [ -n "$OAUTH_TOKEN" ]; then
-  cmd="$cmd -H 'Authorization: token $OAUTH_TOKEN'"
+if [ -n "$GITHUB_API_TOKEN" ]; then
+  cmd="$cmd -H 'Authorization: token $GITHUB_API_TOKEN'"
 fi
+
 cmd="$cmd $releases_path"
 
 # Fetch all tag names, and get only second column. Then remove all unnecesary characters.
