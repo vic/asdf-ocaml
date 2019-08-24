@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 get_latest_opam() {
   local platform
 
@@ -27,7 +29,11 @@ ocaml_install() {
   local release=$2
   local install_path=$3
 
-  local tmp_dir=$(mktemp -d -t ocaml_XXXXXXX)
+  if [ "$TMPDIR" = "" ]; then
+    local tmp_download_dir=$(mktemp -d -t ocaml_build_XXXXXX)
+  else
+    local tmp_download_dir=$TMPDIR
+  fi
 
   local current_script_path=$(dirname ${BASH_SOURCE[0]})
   local plugin_path=$(dirname $current_script_path)
@@ -43,13 +49,13 @@ ocaml_install() {
   # running this in a subshell
   # we don't want to disturb current working dir
   (
-    cd $tmp_dir
+    cd $tmp_download_dir
     echo "downloading latest opam..."
     get_latest_opam
     echo "installing specified version of ocaml..."
     ./opam init --yes --root $install_path --comp $release
     mkdir -p $install_path/$release/bin/
-    mv $tmp_dir/opam $install_path/$release/bin/
+    mv $tmp_download_dir/opam $install_path/$release/bin/
   ) || (
     rm -rf $install_path
     exit 1

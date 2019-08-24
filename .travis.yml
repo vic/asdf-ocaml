@@ -1,5 +1,9 @@
 language: c
 
+env:
+  global:
+    - TMPDIR=/tmp
+
 matrix:
   include:
     - os: linux
@@ -8,12 +12,15 @@ matrix:
         apt:
           packages:
             - bubblewrap
-    # - os: osx
-    #   osx_image: xcode10.3
+    - os: osx
+      osx_image: xcode11
+      addons:
+        homebrew:
+          update: true
 
 before_script:
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
 
 script:
-  - asdf plugin-test ocaml $TRAVIS_BUILD_DIR
+  - asdf plugin-test ocaml $TRAVIS_BUILD_DIR --asdf-tool-version 4.08.1
