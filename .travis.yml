@@ -1,34 +1,19 @@
-language: generic
+language: c
 
 matrix:
   include:
     - os: linux
-      services:
-        - docker
-      script:
-        - |
-          bash -c "while true; do echo \$(date) - travis building ...; sleep 540; done" &
-          export PING_LOOP_PID=$!
-        - |
-          cat <<-EOF | docker run -i ubuntu bash -
-          set -e
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get update -qq && apt-get install -qq git curl build-essential unzip m4
-          git clone https://github.com/asdf-vm/asdf.git
-          . asdf/asdf.sh
-          asdf plugin-test ocaml https://github.com/vic/asdf-ocaml.git 'ocaml --help'
-          EOF
-      after_script:
-        - kill -9 $PING_LOOP_PID
+      dist: bionic
+      addons:
+        apt:
+          packages:
+            - bubblewrap
+    # - os: osx
+    #   osx_image: xcode10.3
 
-    - os: osx
-      before_script:
-        - git clone https://github.com/asdf-vm/asdf.git
-        - . asdf/asdf.sh
-      script:
-        - |
-          bash -c "while true; do echo \$(date) - travis building ...; sleep 540; done" &
-          export PING_LOOP_PID=$!
-        - asdf plugin-test ocaml https://github.com/vic/asdf-ocaml.git 'ocaml --help'
-      after_script:
-        - kill -9 $PING_LOOP_PID
+before_script:
+  - git clone https://github.com/asdf-vm/asdf.git
+  - . asdf/asdf.sh
+
+script:
+  - asdf plugin-test ocaml $TRAVIS_BUILD_DIR
