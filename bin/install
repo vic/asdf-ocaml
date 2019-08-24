@@ -11,15 +11,13 @@ get_latest_opam() {
     platform="-x86_64-openbsd"
   fi
 
-  curl -sL https://api.github.com/repos/ocaml/opam/releases/latest |
-    grep "browser_download_url" |
+  curl -s https://api.github.com/repos/ocaml/opam/releases/latest |
     grep "opam" |
     grep -- $platform |
     grep -v ".asc" |
     cut -d : -f 2,3 |
     tr -d \" |
-    (echo -en "url = " && cat -) |
-    curl -#L -K - >opam
+    wget -qi - --show-progress --output-document=opam
 
   chmod +x opam
 }
