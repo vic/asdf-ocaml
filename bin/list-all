@@ -1,19 +1,8 @@
 #!/usr/bin/env bash
 
-releases_path=https://api.github.com/repos/ocaml/opam-repository/contents/packages/ocaml-base-compiler
-
-# stolen from https://github.com/rbenv/ruby-build/pull/631/files#diff-fdcfb8a18714b33b07529b7d02b54f1dR942
-function sort_versions() {
-  sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
-    LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
-}
-
 cmd="curl -s"
 if [ -n "$GITHUB_API_TOKEN" ]; then
   cmd="$cmd -H 'Authorization: token $GITHUB_API_TOKEN'"
 fi
-cmd="$cmd $releases_path"
 
-# Fetch all tag names, and get only second column. Then remove all unnecesary characters.
-versions=$(eval $cmd | grep -E 'name": "ocaml-base-compiler.[0-9]' | sed -e 's/.* "ocaml-base-compiler.//;s/",//' | sort_versions)
-echo $versions
+echo $($cmd https://api.github.com/repos/ocaml/ocaml/releases | sed -n 's/.*"tag_name": "\(.*\)",/\1/p' | sort -t. -n -k2,3)
