@@ -1,4 +1,9 @@
 
-This repo has been archived as is no longer updated.
+This repo has been archived and is no longer updated.
 
-Please refer to the its location: [asdf-ocaml/asdf-ocaml](https://github.com/asdf-ocaml/asdf-ocaml)
+Update your asdf setup to use the new location: [asdf-ocaml/asdf-ocaml](https://github.com/asdf-ocaml/asdf-ocaml)
+
+```shell
+asdf plugin-remove ocaml
+asdf plugin-add ocaml https://github.com/asdf-ocaml/asdf-ocaml
+```
